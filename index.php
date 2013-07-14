@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * User has successfully authenticated with Twitter. Access tokens saved to session and DB.
- */
 
 /* Load required lib files. */
 session_start();
@@ -21,6 +17,8 @@ $connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $access_token['oau
 
 /* Get the list of all the User Friends Id's*/
 $ids = get_object_vars($connection->get('friends/ids'))['ids'];
+
+/* check the number of friend */
 if (count($ids)>100){
 
 /* Split the Friends id's in group of 100 to overcome the limit of the twitter API */
@@ -32,18 +30,23 @@ if (count($ids)>100){
   $friends = array_merge($friends, $connection->get('users/lookup', array('user_id' => implode(",",$value))));
  };
 } else {
+
+/* If the friends are less than 100 make only one request */
   $friends = $connection->get('users/lookup', array('user_id' => implode(",",$ids)));
 };
+
+/* Sort the friend based on the Name */
 $friendsort=array();
-usort($friends, function($a,$b)
-{
+usort($friends, function($a,$b){
  return strcmp($a->name, $b->name);
 });
+
+/* Create the HTML Form */
 $content = "<form>\n";
 foreach ($friends as $friend){
  $content = $content."<div class='friend'><input type='checkbox' name='friend[]' value='@$friend->screen_name'><img src='$friend->profile_image_url' width='48' hegh='48'> $friend->name </input></div><br>\n";
 };
 $content = $content."</form>\n";
-//$content = $friends;
+
 /* Include HTML to display on the page */
 include('html.inc');
