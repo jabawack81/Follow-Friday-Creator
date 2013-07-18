@@ -1,11 +1,6 @@
 <?php
 
-/**
- * @file
- * A single location to store configuration.
- * Set dev for local development
- * set the $dev variable to switch from the config for production or development machine
- */
+/* set the $dev variable to switch from the config for production or development machine */
 $dev = true;
 if ($dev){
  define('CONSUMER_KEY',    'CONSUMER_KEY_HERE');
